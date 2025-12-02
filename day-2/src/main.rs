@@ -87,8 +87,8 @@ fn is_valid_id_advanced(id: u64) -> bool {
     // length of the substring exceeds half of the original string length.
     let cutoff_length = id_str.len() / 2;
 
-    for i in 0..cutoff_length + 1 {
-        if i == 0 || id_str.len() % i != 0 {
+    for i in 1..cutoff_length + 1 {
+        if id_str.len() % i != 0 {
             continue;
         }
 
