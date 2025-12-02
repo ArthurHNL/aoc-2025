@@ -14,7 +14,7 @@ enum DialTurnDirection {
 
 struct DialTurnInstruction {
     clicks: u16,
-    direction: DialTurnDirection
+    direction: DialTurnDirection,
 }
 
 fn parse_dial_turn_instruction(instruction: &str) -> DialTurnInstruction {
@@ -23,22 +23,22 @@ fn parse_dial_turn_instruction(instruction: &str) -> DialTurnInstruction {
     let direction = match direction_char {
         'L' => DialTurnDirection::Left,
         'R' => DialTurnDirection::Right,
-        _ => panic!("Unknown direction character: {}", direction_char)
+        _ => panic!("Unknown direction character: {}", direction_char),
     };
     let clicks_char = chars_iter.collect::<String>();
-    let clicks = clicks_char.parse::<u16>().expect("Failed to parse clicks characters");
+    let clicks = clicks_char
+        .parse::<u16>()
+        .expect("Failed to parse clicks characters");
 
-    return DialTurnInstruction {
-        clicks,
-        direction
-    };
+    return DialTurnInstruction { clicks, direction };
 }
 
 fn parse_input(input: &str) -> Vec<DialTurnInstruction> {
-    return input.lines()
+    return input
+        .lines()
         .map(|line| line.trim())
         .map(parse_dial_turn_instruction)
-        .collect()
+        .collect();
 }
 
 fn process_instructions_naive(instructions: &Vec<DialTurnInstruction>) -> u16 {
@@ -62,7 +62,7 @@ fn process_instructions_advanced(instructions: &Vec<DialTurnInstruction>) -> u16
     for instruction in instructions {
         let step_size = get_instruction_step_size(instruction);
         for _ in 0..instruction.clicks {
-            dial_position  = (dial_position + step_size) % 100;
+            dial_position = (dial_position + step_size) % 100;
             if dial_position == 0 {
                 count_dial_passes_position_0 += 1;
             }
@@ -79,8 +79,11 @@ fn get_instruction_step_size(current_instruction: &DialTurnInstruction) -> i32 {
     }
 }
 
-fn get_next_dial_position(current_position: &i32, current_instruction: &DialTurnInstruction) -> i32 {
-    let multiplier: i32= match current_instruction.direction {
+fn get_next_dial_position(
+    current_position: &i32,
+    current_instruction: &DialTurnInstruction,
+) -> i32 {
+    let multiplier: i32 = match current_instruction.direction {
         DialTurnDirection::Left => -1,
         DialTurnDirection::Right => 1,
     };
@@ -89,4 +92,3 @@ fn get_next_dial_position(current_position: &i32, current_instruction: &DialTurn
     let new_position = current_position + applied_clicks;
     return new_position % 100;
 }
-
