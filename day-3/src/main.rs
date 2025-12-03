@@ -5,6 +5,10 @@ fn main() {
         "Total optimal output joltage (naive): {}",
         total_optimal_output_joltage_naive(&battery_banks)
     );
+    println!(
+        "Total optimal output joltage (advanced): {}",
+        total_optimal_output_joltage_advanced(&battery_banks)
+    );
 }
 
 // Because we have to 're-arrange' the batteries by decimal value before interpret them as a
@@ -50,4 +54,34 @@ fn optimal_output_joltage_naive_for_bank(battery_bank: &Vec<char>) -> u32 {
 
     //println!("{}", current_optimum);
     current_optimum
+}
+
+fn total_optimal_output_joltage_advanced(battery_banks: &Vec<Vec<char>>) -> u128 {
+    battery_banks
+        .iter()
+        .map(optimal_output_joltage_advanced_for_bank)
+        .map(|joltage| joltage as u128)
+        .sum()
+}
+
+fn optimal_output_joltage_advanced_for_bank(battery_bank: &Vec<char>) -> u64 {
+    let mut left_lower_idx = 0;
+    let mut target_cells: Vec<char> = Vec::new();
+    for target_idx in 0..12 {
+        let mut current_max_char: char = '\0';
+        let remaining_chars = 12 - target_idx - 1;
+        let upper_bound = battery_bank.len() - remaining_chars;
+
+        for current_idx in left_lower_idx..upper_bound {
+            if current_max_char < battery_bank[current_idx] {
+                current_max_char = battery_bank[current_idx];
+                left_lower_idx = current_idx + 1;
+            }
+        }
+        target_cells.push(current_max_char)
+    }
+
+    let optimum: u64 = target_cells.iter().collect::<String>().parse().unwrap();
+    //println!("{}", optimum);
+    optimum
 }
